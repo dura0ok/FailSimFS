@@ -22,7 +22,7 @@ class ConfigurableFS(DefaultFS):
 
     @staticmethod
     def default_implementation(func_name, *args, **kwargs):
-        default_func = getattr(super(), func_name, None)
+        default_func = getattr(DefaultFS, func_name, None)
         print(args, kwargs)
         print(f"RES = {list(default_func(*args, **kwargs))}")
         if default_func:
