@@ -20,11 +20,10 @@ class ConfigurableFS(DefaultFS):
         with open(config_file_name, 'r') as f:
             return json.load(f)
 
-    @staticmethod
-    def default_implementation(func_name, *args, **kwargs):
+    def default_implementation(self, func_name, *args, **kwargs):
         default_func = getattr(DefaultFS, func_name, None)
         print(args, kwargs)
-        print(f"RES = {list(default_func(*args, **kwargs))}")
+        print(f"RES = {list(default_func(self, *args, **kwargs))}")
         if default_func:
             return default_func(*args, **kwargs)
         else:
