@@ -4,5 +4,12 @@
       "module": "custom_module",
       "function": "get_attr"
     }
+  },
+
+  "/kek.txt": {
+    "getattr": {
+      "module": "custom_module",
+      "function": "read"
+    }
   }
 }
