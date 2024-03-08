@@ -1,12 +1,10 @@
 import os
-
-from fuse import FuseOSError
+import colorful as cf
+from print_color import print
 
 
 def get_attr(path, fh=None):
-    # print(f"DEBUG: Custom getattr for {path} {fh}")
-
-    # Mimic real getattr behavior (you can customize this part)
+    print(f"DEBUG: Custom getattr for {path} {fh} with logging :)", color='purple')
     try:
         st = os.lstat(path)
         return dict((key, getattr(st, key)) for key in
