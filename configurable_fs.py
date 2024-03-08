@@ -14,11 +14,6 @@ class ConfigurableFS(DefaultFS):
         super().__init__(root)
         self.config = JsonConfigLoader(config_file_name)
 
-    @staticmethod
-    def load_config(config_file_name):
-        with open(config_file_name, 'r') as f:
-            return json.load(f)
-
     def default_implementation(self, func_name, *args, **kwargs):
         default_func = getattr(DefaultFS, func_name, None)
         if default_func:
