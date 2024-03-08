@@ -1,0 +1,8 @@
+{
+  "/": {
+    "getattr": {
+      "module": "custom_module",
+      "function": "get_attr"
+    }
+  }
+}
