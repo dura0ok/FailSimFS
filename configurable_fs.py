@@ -2,9 +2,8 @@ import errno
 import importlib
 import inspect
 import json
-import os
 
-from fuse import FuseOSError, Operations
+from fuse import FuseOSError
 
 from config.json_config_loader import JsonConfigLoader
 from default_impl import DefaultFS
