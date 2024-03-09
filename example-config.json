@@ -1,5 +1,5 @@
 {
-  "/": {
+  "/*": {
     "getattr": {
       "module": "custom_module",
       "function": "get_attr"
@@ -7,7 +7,7 @@
   },
 
   "/kek.txt": {
-    "getattr": {
+    "read": {
       "module": "custom_module",
       "function": "read"
     }

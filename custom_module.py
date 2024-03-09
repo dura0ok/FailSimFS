@@ -1,5 +1,5 @@
 import os
-from random import randint
+import random
 
 from fuse import FuseOSError
 from print_color import print
@@ -17,13 +17,22 @@ def get_attr(path, fh=None):
 
 
 def read(path, size, offset, fh=None):
-    print("DEBUG", color='green')
+    """
+    Read a file, but with 50% chance return no-op
+    :param path: The path to the file being read.
+    :param size:  The number of bytes to read.
+    :param offset: The offset in the file from where to start reading.
+    :param fh: The file handle, representing the open file. It is an identifier that your FUSE implementation can use
+    to keep track of open files.
+    :return: bytes | FuseOSError
+    """
     try:
         with open(path, 'rb') as f:
             data = f.read()
-            if randint(0, 1):
-                print(data)
-                return b''  # Return empty data as a no-op
-            return data[offset:offset + size]
+            res = data[offset:offset + size]
+            if random.random() <= 0.5:
+                print(f"We not get this data to user :) -> {res}", color='red')
+                return b''
+            return res
     except FileNotFoundError:
         raise FuseOSError(2)
