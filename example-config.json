@@ -6,7 +6,7 @@
     }
   },
 
-  "/kek.txt": {
+  "^\\/?kek\\d*\\.txt$": {
     "read": {
       "module": "custom_module",
       "function": "read"
