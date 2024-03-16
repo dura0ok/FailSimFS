@@ -1,15 +1,15 @@
 {
-  "/*": {
-    "getattr": {
-      "module": "custom_module",
-      "function": "get_attr"
-    }
-  },
-
   "^\\/?kek\\d*\\.txt$": {
     "read": {
       "module": "custom_module",
       "function": "read"
+    }
+  },
+
+  "/*": {
+    "getattr": {
+      "module": "custom_module",
+      "function": "get_attr"
     }
   }
 }

@@ -8,4 +8,4 @@ if __name__ == '__main__':
     config_file = 'example-config.json'
 
     fs = ConfigurableFS(root_path, config_file)
-    fuse = FUSE(fs, mount_point, foreground=True, debug=False)
+    fuse = FUSE(fs, mount_point, foreground=True)

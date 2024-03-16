@@ -6,14 +6,13 @@ from print_color import print
 
 
 def get_attr(path, fh=None):
-    # print(f"DEBUG: Custom getattr for {path} {fh} with logging :)", color='purple')
     try:
         st = os.lstat(path)
-        return dict((key, getattr(st, key)) for key in
-                    ('st_atime', 'st_ctime', 'st_gid', 'st_mode', 'st_mtime', 'st_nlink', 'st_size', 'st_uid'))
-    except OSError as e:
-        print(f"ERROR: {e}")
-        return None
+        return dict((key, getattr(st, key)) for key in ('st_atime', 'st_ctime',
+                                                        'st_gid', 'st_mode', 'st_mtime', 'st_nlink', 'st_size',
+                                                        'st_uid'))
+    except FileNotFoundError:
+        raise FuseOSError(2)
 
 
 def read(path, size, offset, fh=None):
@@ -26,6 +25,7 @@ def read(path, size, offset, fh=None):
     to keep track of open files.
     :return: bytes | FuseOSError
     """
+    print(f"custom read method for {path}", color="green")
     try:
         with open(path, 'rb') as f:
             data = f.read()
