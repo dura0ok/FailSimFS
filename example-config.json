@@ -1,15 +1,8 @@
 {
-  "^\\/?kek\\d*\\.txt$": {
+  "/app/postgres/data/*": {
     "read": {
       "module": "custom_module",
       "function": "read"
-    }
-  },
-
-  "/*": {
-    "getattr": {
-      "module": "custom_module",
-      "function": "get_attr"
     }
   }
 }
