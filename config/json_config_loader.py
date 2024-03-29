@@ -16,7 +16,7 @@ class JsonConfigLoader(ConfigLoader):
     def find_matching_key(self, path: str) -> Optional[str]:
         config_data: Dict[str, Any] = self.load_config()
         for key in config_data.keys():
-            print(key, path, bool(re.match(key, path)))
+            # print(key, path, bool(re.match(key, path)))
             if re.match(key, path):
                 return key
         return None
