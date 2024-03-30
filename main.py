@@ -5,7 +5,7 @@ from configurable_fs import ConfigurableFS
 
 def main(mount_point, root_path, config_file):
     fs = ConfigurableFS(root_path, config_file)
-    fuse = FUSE(fs, mount_point, foreground=True)
+    FUSE(fs, mount_point, foreground=True)
 
 
 if __name__ == '__main__':
@@ -15,4 +15,5 @@ if __name__ == '__main__':
     parser.add_argument('config_file', type=str, help='Path to the configuration file')
 
     args = parser.parse_args()
+    print(args)
     main(args.mount_point, args.root_path, args.config_file)

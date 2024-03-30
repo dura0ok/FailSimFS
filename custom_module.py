@@ -31,8 +31,9 @@ def read(path, size, offset, fh=None):
             data = f.read()
             res = data[offset:offset + size]
             if random.random() <= 0.5:
-                print(f"We not get this data to user :) -> {res}", color='red')
+                print(f"We not get this data to user :) -> {res[:10]}", color='red')
                 return b''
             return res
     except FileNotFoundError:
         raise FuseOSError(2)
+
