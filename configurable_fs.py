@@ -38,11 +38,11 @@ class ConfigurableFS(DefaultFS):
         return self.apply_replacement(path, fh)
 
     def readdir(self, path, fh):
-        print(path)
+        # print(path)
         return self.apply_replacement(path, fh)
 
     def read(self, path, size, offset, fh):
-        print(path, size)
+        # print(path, size)
         return self.apply_replacement(path, size, offset, fh)
 
     def write(self, path, data, offset, fh):
