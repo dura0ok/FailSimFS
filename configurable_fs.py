@@ -38,12 +38,46 @@ class ConfigurableFS(DefaultFS):
         return self.apply_replacement(path, fh)
 
     def readdir(self, path, fh):
-        # print(path)
         return self.apply_replacement(path, fh)
 
     def read(self, path, size, offset, fh):
-        # print(path, size)
         return self.apply_replacement(path, size, offset, fh)
 
     def write(self, path, data, offset, fh):
         return self.apply_replacement(path, data, offset, fh)
+
+    def open(self, path, flags):
+        return self.apply_replacement(path, flags)
+
+    def create(self, path, mode, fi=None):
+        return self.apply_replacement(path, mode, fi)
+
+    def unlink(self, path):
+        return self.apply_replacement(path)
+
+    def mkdir(self, path, mode):
+        return self.apply_replacement(path, mode)
+
+    def rmdir(self, path):
+        return self.apply_replacement(path)
+
+    def chmod(self, path, mode):
+        return self.apply_replacement(path, mode)
+
+    def chown(self, path, uid, gid):
+        return self.apply_replacement(path, uid, gid)
+
+    def truncate(self, path, length, fh=None):
+        return self.apply_replacement(path, length, fh)
+
+    def utimens(self, path, times=None):
+        return self.apply_replacement(path, times)
+
+    def rename(self, old, new):
+        return self.apply_replacement(old, new)
+
+    def statfs(self, path):
+        return self.apply_replacement(path)
+
+    def fsync(self, path, datasync, fh):
+        return self.apply_replacement(path, datasync, fh)

@@ -1,3 +1,4 @@
+import errno
 import os
 
 from fuse import FuseOSError, Operations
@@ -14,22 +15,22 @@ class DefaultFS(Operations):
                                                             'st_gid', 'st_mode', 'st_mtime', 'st_nlink', 'st_size',
                                                             'st_uid'))
         except FileNotFoundError:
-            raise FuseOSError(2)
+            raise FuseOSError(errno.ENOENT)
 
     def readdir(self, path, fh):
         try:
             dirs = ['.', '..'] + [f.name for f in os.scandir(path)]
             return dirs
         except FileNotFoundError:
-            raise FuseOSError(2)
+            raise FuseOSError(errno.ENOENT)
 
     def read(self, path, size, offset, fh):
         try:
             with open(path, 'rb') as f:
-                data = f.read()
-                return data[offset:offset + size]
+                f.seek(offset)
+                return f.read(size)
         except FileNotFoundError:
-            raise FuseOSError(2)
+            raise FuseOSError(errno.ENOENT)
 
     def write(self, path, data, offset, fh):
         try:
@@ -38,30 +39,85 @@ class DefaultFS(Operations):
                 f.write(data)
                 return len(data)
         except FileNotFoundError:
-            raise FuseOSError(2)
+            raise FuseOSError(errno.ENOENT)
 
     def mkdir(self, path, mode):
         try:
             os.mkdir(path, mode)
         except FileExistsError:
-            raise FuseOSError(17)
+            raise FuseOSError(errno.EEXIST)
         except FileNotFoundError:
-            raise FuseOSError(2)
+            raise FuseOSError(errno.ENOENT)
 
     def rmdir(self, path):
         try:
             os.rmdir(path)
         except FileNotFoundError:
-            raise FuseOSError(2)
+            raise FuseOSError(errno.ENOENT)
 
     def unlink(self, path):
         try:
             os.unlink(path)
         except FileNotFoundError:
-            raise FuseOSError(2)
+            raise FuseOSError(errno.ENOENT)
 
-    def full_path(self, partial) -> str:
-        if partial.startswith("/"):
-            partial = partial[1:]
-        path = os.path.join(self.basedir, partial)
-        return str(path)
+    def open(self, path, flags):
+        try:
+            return os.open(path, flags)
+        except FileNotFoundError:
+            raise FuseOSError(errno.ENOENT)
+
+    def create(self, path, mode, fi=None):
+        try:
+            return os.open(path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, mode)
+        except FileNotFoundError:
+            raise FuseOSError(errno.ENOENT)
+
+    def chmod(self, path, mode):
+        try:
+            os.chmod(path, mode)
+        except FileNotFoundError:
+            raise FuseOSError(errno.ENOENT)
+
+    def chown(self, path, uid, gid):
+        try:
+            os.chown(path, uid, gid)
+        except FileNotFoundError:
+            raise FuseOSError(errno.ENOENT)
+
+    def truncate(self, path, length, fh=None):
+        try:
+            with open(path, 'r+') as f:
+                f.truncate(length)
+        except FileNotFoundError:
+            raise FuseOSError(errno.ENOENT)
+
+    def utimens(self, path, times=None):
+        try:
+            os.utime(path, times)
+        except FileNotFoundError:
+            raise FuseOSError(errno.ENOENT)
+
+    def rename(self, old, new):
+        try:
+            os.rename(old, new)
+        except FileNotFoundError:
+            raise FuseOSError(errno.ENOENT)
+
+    def statfs(self, path):
+        statvfs = os.statvfs(path)
+        return {
+            'f_bsize': statvfs.f_bsize,
+            'f_blocks': statvfs.f_blocks,
+            'f_bavail': statvfs.f_bavail,
+            'f_files': statvfs.f_files,
+            'f_ffree': statvfs.f_ffree,
+            'f_frsize': statvfs.f_frsize,
+            'f_favail': statvfs.f_favail
+        }
+
+    def fsync(self, path, datasync, fh):
+        try:
+            os.fsync(fh)
+        except FileNotFoundError:
+            raise FuseOSError(errno.ENOENT)

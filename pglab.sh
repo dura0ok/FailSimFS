@@ -184,11 +184,13 @@ main() {
     run_fs "$FS_DIR" "$INSTALLED_PG_DIR" "$MNT_DIR"
     init_db_dir "$INSTALLED_PG_DIR" "$INSTALLED_PG_DATA_DIR"
     kill_port_process 5432
-    start_postgres "${MNT_DIR}" "${MNT_DIR}/data"
-    create_db_for_tests "$INSTALLED_PG_DIR" "$DB_TESTS_NAME"
-    create_physical_replica "$INSTALLED_PG_DIR" "$REPLICA_DATA_DIR"
-    start_postgres "$INSTALLED_PG_DIR" "$REPLICA_DATA_DIR" 5433
-    fg
+    echo "$MNT_DIR"
+    # start_postgres "${MNT_DIR}" "${MNT_DIR}/data"
+     start_postgres "${INSTALLED_PG_DIR}" "${MNT_DIR}/data"
+#    create_db_for_tests "$INSTALLED_PG_DIR" "$DB_TESTS_NAME"
+#    create_physical_replica "$INSTALLED_PG_DIR" "$REPLICA_DATA_DIR"
+#    start_postgres "$INSTALLED_PG_DIR" "$REPLICA_DATA_DIR" 5433
+#    fg
 }
 
 main
