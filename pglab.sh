@@ -93,13 +93,14 @@ init_fs_venv() {
 
 run_fs() {
   local FS_DIR=$1
-  local INSTALLED_PG_DIR=$2
+  local BASE_DIR=$2
+  local MNT_DIR_NAME=$3
   cd "$FS_DIR" || exit
 
-  sudo umount fake_postgres
-  sudo rm -rf fake_postgres
-  create_dir_for_exps_if_not_exists fake_postgres
-  python main.py fake_postgres  "${INSTALLED_PG_DIR}/data" example-config.json &
+  sudo umount "$MNT_DIR_NAME"
+  sudo rm -rf "$MNT_DIR_NAME"
+  create_dir_for_exps_if_not_exists "$MNT_DIR_NAME"
+  python main.py "$MNT_DIR_NAME"  "$BASE_DIR" example-config.json &
 }
 
 init_db_dir() {
@@ -134,12 +135,18 @@ create_db_for_tests() {
 kill_port_process() {
     local port="$1"
     local pid
-    pid=$(sudo lsof -t -i :"$port")
+    pid=$(lsof -t -i :"$port" 2>/dev/null)
     if [ -n "$pid" ]; then
-        sudo kill -9 "$pid"
-        echo "Process running on port $port has been terminated."
+        if kill -9 "$pid" 2>/dev/null; then
+            echo "Process running on port $port has been terminated."
+        else
+            echo "Failed to terminate process running on port $port."
+        fi
+    else
+        echo "No process running on port $port."
     fi
 }
+
 main() {
     # Variables
     local TMP_DIR="${TMP_DIR:-/tmp/fuse}"
@@ -159,11 +166,14 @@ main() {
     REPLICA_DATA_DIR=$(concat_paths "$INSTALLED_PG_DIR" "replica-data")
 
     local DB_TESTS_NAME="pg_tests"
+    local MNT_DIR
+    MNT_DIR=$(concat_paths "$FS_DIR" "fake_postgres")
 
     echo "POSTGRES_DIR: $POSTGRES_DIR"
     echo "INSTALLED_PG_DIR: $INSTALLED_PG_DIR"
     echo "INSTALLED_PG_DATA_DIR: $INSTALLED_PG_DATA_DIR"
     echo "FSDIR: $FS_DIR"
+    echo "MNT_DIR: $MNT_DIR"
 
     setup_environment > /dev/null
     create_dir_for_exps_if_not_exists "$TMP_DIR"
@@ -171,13 +181,14 @@ main() {
     install_postgres "$POSTGRES_DIR" "$INSTALLED_PG_DIR"
     clone_fs "$FS_DIR"
     init_fs_venv "$FS_DIR"
-    run_fs "$FS_DIR" "$INSTALLED_PG_DIR"
+    run_fs "$FS_DIR" "$INSTALLED_PG_DIR" "$MNT_DIR"
     init_db_dir "$INSTALLED_PG_DIR" "$INSTALLED_PG_DATA_DIR"
     kill_port_process 5432
-    start_postgres "$INSTALLED_PG_DIR" "$INSTALLED_PG_DATA_DIR"
+    start_postgres "${MNT_DIR}" "${MNT_DIR}/data"
     create_db_for_tests "$INSTALLED_PG_DIR" "$DB_TESTS_NAME"
     create_physical_replica "$INSTALLED_PG_DIR" "$REPLICA_DATA_DIR"
     start_postgres "$INSTALLED_PG_DIR" "$REPLICA_DATA_DIR" 5433
+    fg
 }
 
 main
