@@ -121,3 +121,9 @@ class DefaultFS(Operations):
             os.fsync(fh)
         except FileNotFoundError:
             raise FuseOSError(errno.ENOENT)
+
+    def full_path(self, partial) -> str:
+        if partial.startswith("/"):
+            partial = partial[1:]
+        path = os.path.join(self.basedir, partial)
+        return str(path)
