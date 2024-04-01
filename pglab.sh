@@ -97,7 +97,7 @@ run_fs() {
   local MNT_DIR_NAME=$3
   cd "$FS_DIR" || exit
 
-  sudo umount "$MNT_DIR_NAME"
+  sudo umount -f "$MNT_DIR_NAME"
   sudo rm -rf "$MNT_DIR_NAME"
   create_dir_for_exps_if_not_exists "$MNT_DIR_NAME"
   python main.py "$MNT_DIR_NAME"  "$BASE_DIR" example-config.json &
@@ -115,6 +115,7 @@ start_postgres() {
   local INSTALLED_PG_DIR=$1
   local PG_DATA=$2
   local PORT=${3:-5432}
+  echo "PARAMS: ${1} ${2} ${PORT}"
   "${INSTALLED_PG_DIR}"/bin/pg_ctl -D "$PG_DATA" -l logfile -o "-p $PORT" start
 }
 
@@ -136,6 +137,7 @@ kill_port_process() {
     local port="$1"
     local pid
     pid=$(lsof -t -i :"$port" 2>/dev/null)
+
     if [ -n "$pid" ]; then
         if kill -9 "$pid" 2>/dev/null; then
             echo "Process running on port $port has been terminated."
@@ -172,7 +174,7 @@ main() {
     echo "POSTGRES_DIR: $POSTGRES_DIR"
     echo "INSTALLED_PG_DIR: $INSTALLED_PG_DIR"
     echo "INSTALLED_PG_DATA_DIR: $INSTALLED_PG_DATA_DIR"
-    echo "FSDIR: $FS_DIR"
+    echo "FS_DIR: $FS_DIR"
     echo "MNT_DIR: $MNT_DIR"
 
     setup_environment > /dev/null
@@ -182,15 +184,15 @@ main() {
     clone_fs "$FS_DIR"
     init_fs_venv "$FS_DIR"
     run_fs "$FS_DIR" "$INSTALLED_PG_DIR" "$MNT_DIR"
-    init_db_dir "$INSTALLED_PG_DIR" "$INSTALLED_PG_DATA_DIR"
     kill_port_process 5432
-    echo "$MNT_DIR"
-    # start_postgres "${MNT_DIR}" "${MNT_DIR}/data"
-     start_postgres "${INSTALLED_PG_DIR}" "${MNT_DIR}/data"
-#    create_db_for_tests "$INSTALLED_PG_DIR" "$DB_TESTS_NAME"
-#    create_physical_replica "$INSTALLED_PG_DIR" "$REPLICA_DATA_DIR"
-#    start_postgres "$INSTALLED_PG_DIR" "$REPLICA_DATA_DIR" 5433
-#    fg
+    init_db_dir "$INSTALLED_PG_DIR" "${MNT_DIR}/data"
+#    echo "$MNT_DIR"
+#    #start_postgres "${MNT_DIR}" "${MNT_DIR}/data"
+##    start_postgres "${INSTALLED_PG_DIR}" "${MNT_DIR}/data"
+##    create_db_for_tests "$INSTALLED_PG_DIR" "$DB_TESTS_NAME"
+##    create_physical_replica "$INSTALLED_PG_DIR" "$REPLICA_DATA_DIR"
+##    start_postgres "$INSTALLED_PG_DIR" "$REPLICA_DATA_DIR" 5433
+    fg
 }
 
 main
