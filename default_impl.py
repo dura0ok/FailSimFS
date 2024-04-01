@@ -122,6 +122,16 @@ class DefaultFS(Operations):
         except FileNotFoundError:
             raise FuseOSError(errno.ENOENT)
 
+    def symlink(self, target, source):
+        full_source = self.full_path(source)
+        full_target = self.full_path(target)
+        os.symlink(full_target, full_source)
+
+    def link(self, target, source):
+        full_source = self.full_path(source)
+        full_target = self.full_path(target)
+        os.link(full_target, full_source)
+
     def full_path(self, partial) -> str:
         if partial.startswith("/"):
             partial = partial[1:]

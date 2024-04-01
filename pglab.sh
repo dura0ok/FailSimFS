@@ -97,7 +97,7 @@ run_fs() {
   local MNT_DIR_NAME=$3
   cd "$FS_DIR" || exit
 
-  sudo umount -f "$MNT_DIR_NAME"
+  sudo umount -lf "$MNT_DIR_NAME"
   sudo rm -rf "$MNT_DIR_NAME"
   create_dir_for_exps_if_not_exists "$MNT_DIR_NAME"
   python main.py "$MNT_DIR_NAME"  "$BASE_DIR" example-config.json &

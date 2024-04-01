@@ -81,3 +81,9 @@ class ConfigurableFS(DefaultFS):
 
     def fsync(self, path, datasync, fh):
         return self.apply_replacement(path, datasync, fh)
+
+    def symlink(self, target, source):
+        return self.apply_replacement(target, source)
+
+    def link(self, target, source):
+        return self.apply_replacement(target, source)
