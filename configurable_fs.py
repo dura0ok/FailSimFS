@@ -24,18 +24,20 @@ class ConfigurableFS(DefaultFS):
 
     def apply_replacement(self, path, *args, **kwargs):
         syscall_name = inspect.stack()[1][3]
-        print(syscall_name, path, args, kwargs)
+
         replacement = self.config.get_replacement(path, syscall_name)
-        full_path = super().full_path(path)
+        f_path = self.full_path(path)
+        print(f"REPLACEMENT, {syscall_name}, {replacement} {f_path}, {args}, {kwargs}", color="blue")
         if replacement:
             module_name, function_name = replacement['module'], replacement['function']
             module = importlib.import_module(module_name)
             func = getattr(module, function_name)
-            return func(full_path, *args, **kwargs)
+            return func(f_path, *args, **kwargs)
         else:
-            return self.default_implementation(syscall_name, full_path, *args, **kwargs)
+            return self.default_implementation(syscall_name, f_path, *args, **kwargs)
 
     def getattr(self, path, fh=None):
+        print(f"GEATTR path {path}")
         return self.apply_replacement(path, fh)
 
     def readdir(self, path, fh):
@@ -90,10 +92,7 @@ class ConfigurableFS(DefaultFS):
         return self.apply_replacement(target, source)
 
     def readlink(self, path):
-        try:
-            return os.readlink(path)
-        except FileNotFoundError:
-            raise FuseOSError(errno.ENOENT)
+        return self.apply_replacement(path)
 
     def mknod(self, path, mode, dev):
         return self.apply_replacement(path, mode, dev)
@@ -102,17 +101,13 @@ class ConfigurableFS(DefaultFS):
         return self.apply_replacement(path, fh)
 
     def release(self, path, fh):
-        try:
-            os.close(fh)
-        except FileNotFoundError:
-            raise FuseOSError(errno.ENOENT)
+        return self.apply_replacement(path, fh)
 
     def access(self, path, mode):
-        if not os.access(path, mode):
-            raise FuseOSError(errno.EACCES)
+        return self.apply_replacement(path, mode)
 
     def lock(self, path, fh, cmd, lock):
-        raise FuseOSError(errno.ENOSYS)  # Not implemented
+        return self.apply_replacement(path, fh, cmd, lock)
 
     def lseek(self, path, off, whence):
         return self.apply_replacement(path, path, off, whence)

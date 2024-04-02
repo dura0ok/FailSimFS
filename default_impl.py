@@ -2,8 +2,9 @@ import errno
 import fcntl
 import os
 
+import fuse
 from fuse import FuseOSError, Operations
-
+from print_color import print
 
 class DefaultFS(Operations):
     def __init__(self, basedir):
@@ -124,14 +125,10 @@ class DefaultFS(Operations):
             raise FuseOSError(errno.ENOENT)
 
     def symlink(self, target, source):
-        full_source = self.full_path(source)
-        full_target = self.full_path(target)
-        os.symlink(full_target, full_source)
+        os.symlink(target, source)
 
     def link(self, target, source):
-        full_source = self.full_path(source)
-        full_target = self.full_path(target)
-        os.link(full_target, full_source)
+        os.link(target, source)
 
     def readlink(self, path):
         try:
@@ -159,22 +156,19 @@ class DefaultFS(Operations):
 
     def flush(self, path, fh):
         try:
-            os.flush(fh)
+            with open(path, 'r') as f:
+                f.flush()
         except FileNotFoundError:
             raise FuseOSError(errno.ENOENT)
 
     def release(self, path, fh):
-        try:
-            os.close(fh)
-        except FileNotFoundError:
-            raise FuseOSError(errno.ENOENT)
-
+        return 0
     def access(self, path, mode):
         if not os.access(path, mode):
             raise FuseOSError(errno.EACCES)
 
     def lock(self, path, fh, cmd, lock):
-        raise FuseOSError(errno.ENOSYS)  # Not implemented
+        return 0
 
     def lseek(self, path, off, whence):
         try:
