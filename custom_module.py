@@ -36,4 +36,3 @@ def read(path, size, offset, fh=None):
             return res
     except FileNotFoundError:
         raise FuseOSError(2)
-

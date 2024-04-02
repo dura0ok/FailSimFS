@@ -1,5 +1,7 @@
 import argparse
+
 from fuse import FUSE
+
 from configurable_fs import ConfigurableFS
 
 
