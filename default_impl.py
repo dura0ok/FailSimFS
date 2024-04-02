@@ -1,4 +1,5 @@
 import errno
+import fcntl
 import os
 
 from fuse import FuseOSError, Operations
@@ -131,6 +132,64 @@ class DefaultFS(Operations):
         full_source = self.full_path(source)
         full_target = self.full_path(target)
         os.link(full_target, full_source)
+
+    def readlink(self, path):
+        try:
+            return os.readlink(path)
+        except FileNotFoundError:
+            raise FuseOSError(errno.ENOENT)
+
+    def mknod(self, path, mode, dev):
+        try:
+            os.mknod(path, mode, dev)
+        except FileNotFoundError:
+            raise FuseOSError(errno.ENOENT)
+
+    def chmod(self, path, mode):
+        try:
+            os.chmod(path, mode)
+        except FileNotFoundError:
+            raise FuseOSError(errno.ENOENT)
+
+    def chown(self, path, uid, gid):
+        try:
+            os.chown(path, uid, gid)
+        except FileNotFoundError:
+            raise FuseOSError(errno.ENOENT)
+
+    def flush(self, path, fh):
+        try:
+            os.flush(fh)
+        except FileNotFoundError:
+            raise FuseOSError(errno.ENOENT)
+
+    def release(self, path, fh):
+        try:
+            os.close(fh)
+        except FileNotFoundError:
+            raise FuseOSError(errno.ENOENT)
+
+    def access(self, path, mode):
+        if not os.access(path, mode):
+            raise FuseOSError(errno.EACCES)
+
+    def lock(self, path, fh, cmd, lock):
+        raise FuseOSError(errno.ENOSYS)  # Not implemented
+
+    def lseek(self, path, off, whence):
+        try:
+            return os.lseek(path, off, whence)
+        except FileNotFoundError:
+            raise FuseOSError(errno.ENOENT)
+
+    def ioctl(self, path, cmd, arg, fip, flags, data):
+        try:
+            fd = os.open(path, os.O_RDWR)
+            result = fcntl.ioctl(fd, cmd, arg, True)
+            os.close(fd)
+            return result
+        except FileNotFoundError:
+            raise FuseOSError(errno.ENOENT)
 
     def full_path(self, partial) -> str:
         if partial.startswith("/"):

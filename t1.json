@@ -1,0 +1,8 @@
+{
+  "*.txt": {
+    "read": {
+      "module": "custom_module",
+      "function": "read"
+    }
+  }
+}

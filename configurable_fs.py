@@ -2,6 +2,7 @@ import errno
 import importlib
 import inspect
 import json
+import os
 
 from fuse import FuseOSError
 
@@ -24,6 +25,7 @@ class ConfigurableFS(DefaultFS):
 
     def apply_replacement(self, path, *args, **kwargs):
         syscall_name = inspect.stack()[1][3]
+        print(syscall_name, path, args, kwargs)
         replacement = self.config.get_replacement(path, syscall_name)
         full_path = super().full_path(path)
         if replacement:
@@ -87,3 +89,34 @@ class ConfigurableFS(DefaultFS):
 
     def link(self, target, source):
         return self.apply_replacement(target, source)
+
+    def readlink(self, path):
+        try:
+            return os.readlink(path)
+        except FileNotFoundError:
+            raise FuseOSError(errno.ENOENT)
+
+    def mknod(self, path, mode, dev):
+        return self.apply_replacement(path, mode, dev)
+
+    def flush(self, path, fh):
+        return self.apply_replacement(path, fh)
+
+    def release(self, path, fh):
+        try:
+            os.close(fh)
+        except FileNotFoundError:
+            raise FuseOSError(errno.ENOENT)
+
+    def access(self, path, mode):
+        if not os.access(path, mode):
+            raise FuseOSError(errno.EACCES)
+
+    def lock(self, path, fh, cmd, lock):
+        raise FuseOSError(errno.ENOSYS)  # Not implemented
+
+    def lseek(self, path, off, whence):
+        return self.apply_replacement(path, path, off, whence)
+
+    def ioctl(self, path, cmd, arg, fip, flags, data):
+        return self.apply_replacement(path, cmd, arg, fip, flags, data)
