@@ -11,12 +11,13 @@ from default_impl import DefaultFS
 
 
 class ConfigurableFS(DefaultFS):
-    def __init__(self, root, config_file_name):
-        super().__init__(root)
+    def __init__(self, base_dir, config_file_name):
+        super().__init__(base_dir)
         self.config = JsonConfigLoader(config_file_name)
 
     def default_implementation(self, func_name, *args, **kwargs):
         default_func = getattr(DefaultFS, func_name, None)
+        print(f"REPLACEMENT, default_implementation {default_func}", color="blue")
         if default_func:
             return default_func(self, *args, **kwargs)
         else:
@@ -27,7 +28,7 @@ class ConfigurableFS(DefaultFS):
 
         replacement = self.config.get_replacement(path, syscall_name)
         f_path = self.full_path(path)
-        print(f"REPLACEMENT, {syscall_name}, {replacement} {f_path}, {args}, {kwargs}", color="blue")
+        print(f"REPLACEMENT, {syscall_name}, {replacement} {f_path}, {kwargs}", color="red")
         if replacement:
             module_name, function_name = replacement['module'], replacement['function']
             module = importlib.import_module(module_name)
@@ -86,10 +87,10 @@ class ConfigurableFS(DefaultFS):
         return self.apply_replacement(path, datasync, fh)
 
     def symlink(self, target, source):
-        return self.apply_replacement(target, source)
+        return self.apply_replacement(source, self.full_path(target))
 
     def link(self, target, source):
-        return self.apply_replacement(target, source)
+        return self.apply_replacement(source, self.full_path(target))
 
     def readlink(self, path):
         return self.apply_replacement(path)
@@ -105,9 +106,6 @@ class ConfigurableFS(DefaultFS):
 
     def access(self, path, mode):
         return self.apply_replacement(path, mode)
-
-    def lock(self, path, fh, cmd, lock):
-        return self.apply_replacement(path, fh, cmd, lock)
 
     def lseek(self, path, off, whence):
         return self.apply_replacement(path, path, off, whence)

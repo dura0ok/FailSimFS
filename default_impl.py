@@ -6,6 +6,7 @@ import fuse
 from fuse import FuseOSError, Operations
 from print_color import print
 
+
 class DefaultFS(Operations):
     def __init__(self, basedir):
         self.basedir = basedir
@@ -102,7 +103,7 @@ class DefaultFS(Operations):
 
     def rename(self, old, new):
         try:
-            os.rename(old, new)
+            os.rename(old, self.full_path(new))
         except FileNotFoundError:
             raise FuseOSError(errno.ENOENT)
 
@@ -119,16 +120,15 @@ class DefaultFS(Operations):
         }
 
     def fsync(self, path, datasync, fh):
-        try:
-            os.fsync(fh)
-        except FileNotFoundError:
-            raise FuseOSError(errno.ENOENT)
+        return self.flush(path, fh)
 
-    def symlink(self, target, source):
-        os.symlink(target, source)
+    def symlink(self, source, target):
+        print(f"src {source} target={target}", color="green")
+        os.symlink(source, target)
 
-    def link(self, target, source):
-        os.link(target, source)
+    def link(self, source, target):
+        print(f"hard src {source} target={target}, {os.path.exists(source)}", color="green")
+        os.link(source, target)
 
     def readlink(self, path):
         try:
@@ -155,20 +155,14 @@ class DefaultFS(Operations):
             raise FuseOSError(errno.ENOENT)
 
     def flush(self, path, fh):
-        try:
-            with open(path, 'r') as f:
-                f.flush()
-        except FileNotFoundError:
-            raise FuseOSError(errno.ENOENT)
+        return os.fsync(fh)
 
     def release(self, path, fh):
-        return 0
+        return os.close(fh)
+
     def access(self, path, mode):
         if not os.access(path, mode):
             raise FuseOSError(errno.EACCES)
-
-    def lock(self, path, fh, cmd, lock):
-        return 0
 
     def lseek(self, path, off, whence):
         try:
