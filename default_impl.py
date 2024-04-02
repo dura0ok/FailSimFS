@@ -123,11 +123,9 @@ class DefaultFS(Operations):
         return self.flush(path, fh)
 
     def symlink(self, source, target):
-        print(f"src {source} target={target}", color="green")
         os.symlink(source, target)
 
     def link(self, source, target):
-        print(f"hard src {source} target={target}, {os.path.exists(source)}", color="green")
         os.link(source, target)
 
     def readlink(self, path):
