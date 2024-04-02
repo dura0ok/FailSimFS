@@ -183,15 +183,15 @@ main() {
     install_postgres "$POSTGRES_DIR" "$INSTALLED_PG_DIR"
     clone_fs "$FS_DIR"
     init_fs_venv "$FS_DIR"
-#    run_fs "$FS_DIR" "$INSTALLED_PG_DIR" "$MNT_DIR"
-#    kill_port_process 5432
-#    init_db_dir "$INSTALLED_PG_DIR" "${MNT_DIR}/data"
-#    echo "$MNT_DIR"
-#    #start_postgres "${MNT_DIR}" "${MNT_DIR}/data"
-##    start_postgres "${INSTALLED_PG_DIR}" "${MNT_DIR}/data"
-##    create_db_for_tests "$INSTALLED_PG_DIR" "$DB_TESTS_NAME"
-##    create_physical_replica "$INSTALLED_PG_DIR" "$REPLICA_DATA_DIR"
-##    start_postgres "$INSTALLED_PG_DIR" "$REPLICA_DATA_DIR" 5433
+    run_fs "$FS_DIR" "$INSTALLED_PG_DIR" "$MNT_DIR"
+    kill_port_process 5432
+    init_db_dir "$INSTALLED_PG_DIR" "${MNT_DIR}/data"
+    echo "$MNT_DIR"
+    start_postgres "${MNT_DIR}" "${MNT_DIR}/data"
+    start_postgres "${INSTALLED_PG_DIR}" "${MNT_DIR}/data"
+    create_db_for_tests "$INSTALLED_PG_DIR" "$DB_TESTS_NAME"
+    create_physical_replica "$INSTALLED_PG_DIR" "$REPLICA_DATA_DIR"
+    start_postgres "$INSTALLED_PG_DIR" "$REPLICA_DATA_DIR" 5433
     fg
 }
 

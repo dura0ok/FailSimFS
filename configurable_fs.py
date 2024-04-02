@@ -28,7 +28,7 @@ class ConfigurableFS(DefaultFS):
 
         replacement = self.config.get_replacement(path, syscall_name)
         f_path = self.full_path(path)
-        print(f"REPLACEMENT, {syscall_name}, {replacement} {f_path}, {kwargs}", color="red")
+        print(f"REPLACEMENT, {syscall_name}, {replacement} {path} {f_path}, {kwargs}", color="red")
         if replacement:
             module_name, function_name = replacement['module'], replacement['function']
             module = importlib.import_module(module_name)
