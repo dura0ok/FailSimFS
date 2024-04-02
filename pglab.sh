@@ -185,6 +185,7 @@ main() {
     init_fs_venv "$FS_DIR"
     run_fs "$FS_DIR" "$INSTALLED_PG_DIR" "$MNT_DIR"
     kill_port_process 5432
+    kill_port_process 5433
     init_db_dir "$INSTALLED_PG_DIR" "${MNT_DIR}/data"
     echo "$MNT_DIR"
     start_postgres "${MNT_DIR}" "${MNT_DIR}/data"

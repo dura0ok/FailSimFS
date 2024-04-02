@@ -1,6 +1,8 @@
+import errno
 import os
 import random
 import time
+from errno import ENOENT
 
 from fuse import FuseOSError
 from print_color import print
@@ -38,3 +40,18 @@ def read(path, size, offset, fh=None):
             return res
     except FileNotFoundError:
         raise FuseOSError(2)
+
+
+def write(self, path, data, offset, fh):
+    random.seed(time.time())
+    print(f"custom write method for {path}", color="green")
+    if random.random() <= 0.5:
+        raise FuseOSError(errno.ENOSPC)
+
+    try:
+        with open(path, 'r+b') as f:
+            os.lseek(f.fileno(), offset, os.SEEK_SET)
+            os.write(f.fileno(), data)
+            return len(data)
+    except FileNotFoundError:
+        raise FuseOSError(ENOENT)
