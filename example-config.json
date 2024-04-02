@@ -1,5 +1,5 @@
 {
-  "/pg_wal/*": {
+  "/data/pg_wal/*": {
     "read": {
       "module": "custom_module",
       "function": "read"
