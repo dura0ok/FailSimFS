@@ -35,14 +35,9 @@ class DefaultFS(Operations):
         except FileNotFoundError:
             raise FuseOSError(errno.ENOENT)
 
-    def write(self, path, data, offset, fh):
-        try:
-            with open(path, 'r+b') as f:
-                f.seek(offset)
-                f.write(data)
-                return len(data)
-        except FileNotFoundError:
-            raise FuseOSError(errno.ENOENT)
+    def write(self, path, buf, offset, fh):
+        os.lseek(fh, offset, os.SEEK_SET)
+        return os.write(fh, buf)
 
     def mkdir(self, path, mode):
         try:

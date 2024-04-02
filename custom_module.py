@@ -42,16 +42,11 @@ def read(path, size, offset, fh=None):
         raise FuseOSError(2)
 
 
-def write(self, path, data, offset, fh):
+def write(path, buf, offset, fh):
     random.seed(time.time())
     print(f"custom write method for {path}", color="green")
     if random.random() <= 0.5:
         raise FuseOSError(errno.ENOSPC)
 
-    try:
-        with open(path, 'r+b') as f:
-            os.lseek(f.fileno(), offset, os.SEEK_SET)
-            os.write(f.fileno(), data)
-            return len(data)
-    except FileNotFoundError:
-        raise FuseOSError(ENOENT)
+    os.lseek(fh, offset, os.SEEK_SET)
+    return os.write(fh, buf)
