@@ -17,7 +17,7 @@ class ConfigurableFS(DefaultFS):
 
     def default_implementation(self, func_name, *args, **kwargs):
         default_func = getattr(DefaultFS, func_name, None)
-        print(f"REPLACEMENT, default_implementation {default_func}", color="blue")
+        # print(f"REPLACEMENT, default_implementation {default_func}", color="blue")
         if default_func:
             return default_func(self, *args, **kwargs)
         else:
@@ -28,7 +28,7 @@ class ConfigurableFS(DefaultFS):
 
         replacement = self.config.get_replacement(path, syscall_name)
         f_path = self.full_path(path)
-        print(f"REPLACEMENT, {syscall_name}, {replacement} {path} {f_path}, {kwargs}", color="red")
+        #print(f"REPLACEMENT, {syscall_name}, {replacement} {path} {f_path}, {kwargs}", color="red")
         if replacement:
             module_name, function_name = replacement['module'], replacement['function']
             module = importlib.import_module(module_name)
