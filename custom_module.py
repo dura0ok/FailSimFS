@@ -46,6 +46,7 @@ def write(path, buf, offset, fh):
     random.seed(time.time())
     print(f"custom write method for {path}", color="green")
     if random.random() <= 0.5:
+        print(f"Left space :D", color="red")
         raise FuseOSError(errno.ENOSPC)
 
     os.lseek(fh, offset, os.SEEK_SET)
