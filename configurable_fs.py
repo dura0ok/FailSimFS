@@ -38,7 +38,6 @@ class ConfigurableFS(DefaultFS):
             return self.default_implementation(syscall_name, f_path, *args, **kwargs)
 
     def getattr(self, path, fh=None):
-        print(f"GEATTR path {path}")
         return self.apply_replacement(path, fh)
 
     def readdir(self, path, fh):
