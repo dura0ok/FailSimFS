@@ -8,7 +8,7 @@ from configurable_fs import ConfigurableFS
 
 def main(mount_point, base_dir, config_file):
     fs = ConfigurableFS(os.path.abspath(base_dir), config_file)
-    FUSE(fs, os.path.abspath(mount_point), foreground=True, debug=True)
+    FUSE(fs, os.path.abspath(mount_point), foreground=True, debug=False)
 
 
 if __name__ == '__main__':
