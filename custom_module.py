@@ -1,5 +1,6 @@
 import os
 import random
+import time
 
 from fuse import FuseOSError
 from print_color import print
@@ -25,6 +26,7 @@ def read(path, size, offset, fh=None):
     to keep track of open files.
     :return: bytes | FuseOSError
     """
+    random.seed(time.time())
     print(f"custom read method for {path}", color="green")
     try:
         with open(path, 'rb') as f:
