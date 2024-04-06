@@ -1,8 +1,8 @@
 {
-  "/pg_wal/*": {
+  "/data/pg_wal/*": {
     "read": {
       "module": "custom_module",
-      "function": "read"
+      "function": "read_with_random_empty"
     }
   }
 }

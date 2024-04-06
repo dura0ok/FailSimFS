@@ -18,7 +18,7 @@ def get_attr(path, fh=None):
         raise FuseOSError(2)
 
 
-def read(path, size, offset, fh=None):
+def read_with_random_empty(path, size, offset, fh=None):
     """
     Read a file, but with 50% chance return no-op
     :param path: The path to the file being read.
@@ -42,7 +42,7 @@ def read(path, size, offset, fh=None):
         raise FuseOSError(2)
 
 
-def write(path, buf, offset, fh):
+def write_with_random_left_space(path, buf, offset, fh):
     random.seed(time.time())
     print(f"custom write method for {path}", color="green")
     if random.random() <= 0.5:

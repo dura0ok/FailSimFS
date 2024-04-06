@@ -2,7 +2,7 @@
   "/data/pg_wal/*": {
     "write": {
       "module": "custom_module",
-      "function": "write"
+      "function": "write_with_random_left_space"
     }
   }
 }
