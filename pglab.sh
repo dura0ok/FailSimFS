@@ -100,7 +100,7 @@ run_fs() {
   sudo umount -lf "$MNT_DIR_NAME"
   sudo rm -rf "$MNT_DIR_NAME"
   create_dir_for_exps_if_not_exists "$MNT_DIR_NAME"
-  python main.py "$MNT_DIR_NAME"  "$BASE_DIR" example-config.json &
+  python main.py "$MNT_DIR_NAME"  "$BASE_DIR" config.json &
 }
 
 init_db_dir() {
