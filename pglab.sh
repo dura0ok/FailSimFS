@@ -160,7 +160,7 @@ main() {
     INSTALLED_PG_DIR=$(concat_paths "$TMP_DIR" "pg")
 
     local FS_DIR
-    FS_DIR=$(concat_paths "$TMP_DIR" "pglab")
+    FS_DIR=$(concat_paths "$TMP_DIR" "$FS_FOLDER_DIR_NAME")
 
     local INSTALLED_PG_DATA_DIR
     INSTALLED_PG_DATA_DIR=$(concat_paths "$INSTALLED_PG_DIR" "data")
