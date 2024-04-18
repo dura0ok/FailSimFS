@@ -35,7 +35,7 @@ def read_with_random_empty(path, size, offset, fh=None):
             data = f.read()
             res = data[offset:offset + size]
             if random.random() <= 0.5:
-                print(f"We not get this data to user :) -> {res[:10]}", color='red')
+                print(f"We not get this data to user -> {res[:10]}", color='red')
                 return b''
             return res
     except FileNotFoundError:
@@ -46,7 +46,7 @@ def write_with_random_left_space(path, buf, offset, fh):
     random.seed(time.time())
     print(f"custom write method for {path}", color="green")
     if random.random() <= 0.5:
-        print(f"Left space :D", color="red")
+        print(f"Left space", color="red")
         raise FuseOSError(errno.ENOSPC)
 
     os.lseek(fh, offset, os.SEEK_SET)
