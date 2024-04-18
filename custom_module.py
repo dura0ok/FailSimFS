@@ -51,3 +51,11 @@ def write_with_random_left_space(path, buf, offset, fh):
 
     os.lseek(fh, offset, os.SEEK_SET)
     return os.write(fh, buf)
+
+def write_zeros(path, buf, offset, fh):
+    print(f"custom write zeros method for {path} with size {len(buf)}", color="green")
+    os.lseek(fh, offset, os.SEEK_SET)
+    size = len(buf)
+    zeros = b'\x00' * size  
+    os.write(fh, zeros)     
+    return size             
