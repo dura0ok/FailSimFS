@@ -126,6 +126,14 @@ create_physical_replica() {
     rm -rf "$REPLICA_DATA_DIR"
     "${PG_BIN_DIR}"/pg_basebackup -D "${REPLICA_DATA_DIR}" -Fp -Xs -R -c fast -P -h localhost -U replica_user
     sed -i "s/#primary_conninfo = ''/primary_conninfo = 'host=localhost user=replica_user port=5432'/" "${REPLICA_DATA_DIR}/postgresql.conf"
+
+    # Configure the archive settings
+    # echo "archive_mode = on" >> "${REPLICA_DATA_DIR}/postgresql.conf"
+    # echo "archive_command = 'cp %p ${ARCHIVE_DIR}/%f'" >> "${REPLICA_DATA_DIR}/postgresql.conf"
+    # echo "archive_timeout = 60" >> "${REPLICA_DATA_DIR}/postgresql.conf"
+
+    # Set wal_keep_size to 1GB
+    #echo "wal_keep_size = 1024MB" >> "${REPLICA_DATA_DIR}/postgresql.conf"
 }
 
 create_db_for_tests() {
