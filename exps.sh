@@ -74,7 +74,7 @@ install_postgres() {
 }
 
 clone_fs() {
-  FS_REPO="https://github.com/dura0ok/pglab-unreliable-fs.git"
+  FS_REPO="https://github.com/dura0ok/FailSimFS"
   local FS_DIR=$1
   if [ ! -d "$FS_DIR" ]; then
       git clone "$FS_REPO" "$FS_DIR"
