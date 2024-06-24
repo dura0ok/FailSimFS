@@ -44,6 +44,7 @@ class ConfigurableFS(DefaultFS):
         return self.apply_replacement(path, fh)
 
     def read(self, path, size, offset, fh):
+        #print(path)
         return self.apply_replacement(path, size, offset, fh)
 
     def write(self, path, buf, offset, fh):

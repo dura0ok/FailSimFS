@@ -152,7 +152,7 @@ kill_port_process() {
 main() {
     # Variables
     local TMP_DIR="${TMP_DIR:-/tmp/fuse}"
-    local FS_FOLDER_DIR_NAME="${FS_DIR_NAME:-pglab}"
+    local FS_FOLDER_DIR_NAME="${FS_DIR_NAME:-unreliable-fs}"
     local POSTGRES_DIR
     POSTGRES_DIR=$(concat_paths "$TMP_DIR" "postgres")
 
